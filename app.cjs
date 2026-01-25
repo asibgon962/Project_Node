@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const persona_paths = require("./paths/persona.cjs");
+const persona_paths = require("./routes/endpoints.cjs");
 
 const app = express();
 

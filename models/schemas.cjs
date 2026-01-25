@@ -3,8 +3,8 @@ const bcrypt = require("bcrypt");
 
 
 
-//---------Definir el esquema de Contactos-----------
-const ContactosSchema = new Schema({
+//---------Definir el esquema de Usuarios-----------
+const UsuariosSchema = new Schema({
     nombre: {
         type: String,
         required: [true, "El nombre es obligatorio"],
@@ -73,7 +73,7 @@ const ContactosSchema = new Schema({
 
 
 // `pre-save` es para encriptar la contraseña antes de guardar (se podrian meter mas cosas). this se refiere a la propia instacia de la clase modelo.
-ContactosSchema.pre("save", async function(next) {
+UsuariosSchema.pre("save", async function(next) {
     if (this.isModified("password")) { //Is Modified me detecta automaticamente si yo ya he hecho algún cambio en mi función de callback, lo cual es muyyyyy útil
         this.password = await bcrypt.hash(this.password, 10);
     }
@@ -82,7 +82,7 @@ ContactosSchema.pre("save", async function(next) {
 
 
 // Método de instancia para comparar contraseñas
-ContactosSchema.methods.comparePassword = async function(password) { //con metod creo el método que a mi me de la gana
+UsuariosSchema.methods.comparePassword = async function(password) { //con metod creo el método que a mi me de la gana
     return await bcrypt.compare(password, this.password);
 };
 
@@ -165,6 +165,13 @@ const EntregasSchema = new Schema({
         type: String,
         required: [true, "El nombre de la actividad es obligatorio"],
     },
+    Nota_actividad: {
+        type: Number,
+        required: false,
+        min: [0, "La nota mínima es 0"],
+        max: [10, "La nota máxima es 10"],
+        default: null
+        },
     Fecha_entrega: {
         type: String,
         required: [true, "La fecha de entrega es obligatoria"],
@@ -252,21 +259,21 @@ async function crearMensajesPorDefecto() {
                 respuestas: []
             }
         ]);
-
         console.log("Mensajes de bienvenida creados automáticamente");
     }
 }
 
 
 //---------Inicializar los esquemas y exportarlos a contrlers-----------
-const Usuarios = model("Usuarios", ContactosSchema, "Users");
+const Usuarios = model("Usuarios", UsuariosSchema, "Users");
 const Actividades = model("Actividades", ActivitiesSchema, "Activities");
 const Actividades_entregadas = model("Actividades_entregadas", EntregasSchema, "Activities_recieved");
 const Mensajes = model("Mensajes", MensajesSchema, "Messages");
 
 
 
-
+//-----------Exportamos los Schemas para que los puedan usar los controladores y la creacion de Actividades y mensajes por defecto
+//----------- Al iniciar la aplicacion
 module.exports = { Usuarios, Actividades, Actividades_entregadas,Mensajes, crearActividadPorDefecto, crearMensajesPorDefecto};
 
 

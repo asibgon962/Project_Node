@@ -261,12 +261,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         mensaje_servidor.style.color = "green";
                         mensaje_servidor.textContent = "¡Inicio de sesión exitoso!";
                         await new Promise(resolve => setTimeout(resolve, 1000));
-                        if(formData.get("username")=="admin") {
-                            window.location.href = "/public_for_admin/inicio.html";
-                        }
-                        else {
-                            window.location.href = "/inicio.html";
-                        }
+                        window.location.href = "/inicio.html";
+
                     } 
                     else {
                         mensaje_servidor.style.display="block"

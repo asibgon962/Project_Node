@@ -1,7 +1,7 @@
 require("dotenv").config();
 const conector = require("./database/conexion.cjs");
 const app = require("./app.cjs");
-const { crearActividadPorDefecto, crearMensajesPorDefecto } = require("./models/Persona.cjs");
+const { crearActividadPorDefecto, crearMensajesPorDefecto } = require("./models/schemas.cjs");
 
 async function main() {
   try {

@@ -1,18 +1,10 @@
 
 const validator= require("validator");
-const {Usuarios,Actividades,Actividades_entregadas, Mensajes}=require("../models/Persona.cjs")
+const {Usuarios,Actividades,Actividades_entregadas, Mensajes}=require("../models/schemas.cjs")
 const bcrypt=require("bcrypt")
 const jwt= require('jsonwebtoken')
 const path=require('path')
 const fs = require('fs').promises
-
-
-//----------------------función para guardar los datos de usuario en la db-------------------
-
-
-
-
-
 
 
 
@@ -38,7 +30,6 @@ async function insertarDocumentos(req, res) {
         res.status(500).json({ message: "Error al insertar los documentos", error: error.message });
     }
 }
-
 
 
 
@@ -86,6 +77,7 @@ function get_all_messages(req, res) {
 }
 
 
+
 function get_all_activities_user(req, res) {
     const username = req.cookies["username"];
     Actividades_entregadas.find({ username })
@@ -109,6 +101,7 @@ function get_all_activities_user(req, res) {
             res.status(500).json({ message: 'Hubo un error al obtener las actividades' });
         });
 }
+
 
 
 async function delete_activity_and_File(req, res) {
@@ -276,6 +269,8 @@ const upload_answer = async function (req, res) {
 
 
 
+
+
 async function create_activities_admin(req, res) {
   try {
     const token = req.cookies?.token;
@@ -399,15 +394,7 @@ const get_inicio_html = async function (req, res) {
     }
 
     let filePath;
-
-    if (payload?.username === 'admin') {
-        filePath = path.join(__dirname, '..', 'public', 'public_for_admin', 'inicio.html');
-
-    } else {
-       filePath = path.join(__dirname, '..', 'public', 'inicio.html');
-
-    }
-
+    filePath = path.join(__dirname, '..', 'public', 'inicio.html');
     res.sendFile(filePath, err => {
         if (err) {
             console.error('Error al enviar el HTML:', err);
@@ -418,59 +405,8 @@ const get_inicio_html = async function (req, res) {
 
 
 
-const get_inicio_html_admin = async function (req, res) {
-    const token = req.cookies?.token;
-
-    if (!token) {
-        return res.status(401).send('<h1>No estás autorizado</h1>');
-    }
-
-    let payload;
-    try {
-        payload = jwt.decode(token);
-    } catch  {
-        return res.status(401).send('<h1>No estás autorizado</h1>');
-    }
-
-    let filePath;
-
-    if (payload?.username === 'admin') {
-        filePath = path.join(__dirname, '..', 'public', 'public_for_admin', 'inicio.html');
-    } else {
-       return res.status(401).send(`
-                <!DOCTYPE html>
-                <html lang="es">
-                <head>
-                    <meta charset="UTF-8">
-                    <title>No autorizado</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; background-color: #f4f4f4; text-align: center; padding: 50px; }
-                        h1 { color: #e74c3c; }
-                        p { color: #555; }
-                        a { color: #3498db; text-decoration: none; }
-                        a:hover { text-decoration: underline; }
-                    </style>
-                </head>
-                <body>
-                    <h1>No estás autorizado</h1>
-                    <p>Tu sesión no es válida.</p>
-                    <a href="/">Volver al inicio</a>
-                </body>
-                </html>
-            `);
-    }
-
-    res.sendFile(filePath, err => {
-        if (err) {
-            console.error('Error al enviar el HTML:', err);
-            res.status(500).send('Error al cargar la página');
-        }
-    });
-}
 
 
-
-// controllers/authController.js
 async function logout(req, res) {
   try {
     // Invalida la cookie en el navegador expirándola
@@ -592,6 +528,9 @@ const upload_activity = async function (req, res) {
 
 
 
+
+
+
 async function create(req, res) {
     const parametros = req.body; // Obtenemos los datos enviados en el POST. AQUÍ NO HAY IMAGEN REQ BODY Y REQ FILE SE SPARAN AUTOMATICAMENTE
 
@@ -699,6 +638,8 @@ async function create(req, res) {
 
 
 
+
+
 async function start_session (req, res) {
     try {
         const { username, password } = req.body;
@@ -775,12 +716,7 @@ async function start_session (req, res) {
                 </html>
             `);
         }
-        if (payload?.username == 'admin') {
-         res.status(200).sendFile(path.join(rutaBase, 'public', 'public_for_admin', 'inicio.html'));
-
-        } else {
-        res.status(200).sendFile(path.join(rutaBase, 'public', 'inicio.html'));
-        }     
+        res.status(200).sendFile(path.join(rutaBase, 'public', 'inicio.html')); 
     } catch (error) {
         return res.status(500).json({
             status: "error",
@@ -853,6 +789,9 @@ async function downloadFile(req, res) {
 
 
 
+
+
+
 const calculate_minutes_connected = async (req, res) => {
     try {
         const username = req.cookies['username'];
@@ -912,6 +851,9 @@ const calculate_minutes_connected = async (req, res) => {
         res.status(500).json({ message: "Hubo un error en el servidor" });
     }
 };
+
+
+
 
 const get_minutes_connected = async (req, res) => {
     try {
@@ -974,44 +916,6 @@ async function edit_last_conexion (req, res) {
         });
     }
 };
-
-
-
-
-
-
-
-
-
-
-
-//----------------------función para borrar usuario de la db-------------------
-async function delete_One(req, res) {
-    let name_persona_borrar = req.params.name;
-    try {
-        const result = await Usuarios.deleteOne({ nombre_usuario: name_persona_borrar });
-
-        if (result.deletedCount === 0) {
-            return res.status(404).json({
-                status: "error",
-                mensaje: "No se ha encontrado ninguna persona con ese nombre en la db",
-            });
-        }
-
-        return res.status(200).json({
-            status: "exito",
-            mensaje: `La persona con el nombre ${name_persona_borrar} ha sido eliminada`,
-        });
-
-    } catch (error) {
-        return res.status(500).json({
-            status: "error",
-            mensaje: "Error al intentar borrar la persona en la db",
-            error: error.message,
-            linea: error.stack
-        });
-    }
-}
 
 
 
@@ -1110,7 +1014,6 @@ module.exports={
     create,
     start_session,
     edit_last_conexion,
-    delete_One,
     get_all_photo,
     get_all_activities,
     get_all_messages,
@@ -1125,8 +1028,5 @@ module.exports={
     downloadFile,
     create_activities_admin,
     get_inicio_html,
-    get_inicio_html_admin,
     logout
-    
-    
 }
