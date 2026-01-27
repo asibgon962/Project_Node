@@ -20,7 +20,7 @@ router.get("/inicio/get_all_photo",middlewares.verificarToken, persona_Controlle
 router.put("/inicio/edit_last_conexion",middlewares.verificarToken, persona_Controller.edit_last_conexion)
 router.post("/inicio/set_all_minutes",middlewares.verificarToken, persona_Controller.calculate_minutes_connected)
 router.get("/inicio/get_all_minutes",middlewares.verificarToken, persona_Controller.get_minutes_connected)
-
+router.get("/inicio/get_all_activities_send/:username",middlewares.verificarToken_admin, persona_Controller.get_all_activities_send)
 router.get("/inicio/get_all_activities",middlewares.verificarToken, persona_Controller.get_all_activities)
 router.get("/inicio/get_all_messages",middlewares.verificarToken, persona_Controller.get_all_messages)
 router.get("/inicio/get_all_activities_user",middlewares.verificarToken, persona_Controller.get_all_activities_user)
@@ -32,7 +32,7 @@ router.post("/inicio/logout",middlewares.verificarToken, persona_Controller.logo
 router.get("/downloadFile",middlewares.verificarToken, persona_Controller.downloadFile)
 router.get("/inicio.html",middlewares.verificarToken, persona_Controller.get_inicio_html)
 router.post("/create_activities_admin",middlewares.verificarToken, persona_Controller.create_activities_admin)
-
+router.put("/inicio/edit_activity_mark/:tema/:actividad/:usuario",middlewares.verificarToken_admin, persona_Controller.edit_activity_mark)
 
 
 

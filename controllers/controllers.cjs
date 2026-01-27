@@ -917,6 +917,63 @@ async function edit_last_conexion (req, res) {
     }
 };
 
+function get_all_activities_send(req, res) {
+  const { username } = req.params;
+  Actividades_entregadas.find({ username })
+    .then(actividades => {
+      // ojo, SIEMPRE devolver un array para cuando no hay nada
+      res.status(200).json(actividades || []);
+    })
+    .catch(error => {
+      console.error(error);
+      res.status(500).json([]);
+    });
+}
+
+
+async function edit_activity_mark (req, res)  {
+  try {
+    const {tema, actividad, usuario} = req.params;
+    const { nota } = req.body;
+
+    // validamos que la nota llegue bien por si nos envían basura
+    if (nota === undefined || nota === null) {
+      return res.status(400).json({ error: "La nota es obligatoria" });
+    }
+    const notaNumerica = Number(nota);
+    console.log(notaNumerica)
+    console.log("---------")
+    console.log(req.params)
+    console.log(tema)
+    console.log(actividad)
+    console.log(usuario)
+
+    if (Number.isNaN(notaNumerica) || notaNumerica < 0 || notaNumerica > 10) {
+      return res.status(400).json({ error: "La nota debe estar entre 0 y 10" });
+    }
+    console.log("hasta_aqui")
+
+    // usamos el método findOneAndUpdate
+    const entrega = await Actividades_entregadas.findOneAndUpdate(
+      { username: usuario, Actividad: actividad, Tema: tema},
+      { Nota_actividad: notaNumerica }
+    );
+    console.log(entrega)
+
+    if (!entrega) {
+      return res.status(404).json({ error: "Entrega no encontrada" });
+    }
+    return res.json({
+      ok: true,
+      mensaje: "Nota actualizada correctamente",
+    });
+
+  } catch (err) {
+    return res.status(500).json({ error: "Error" });
+  }
+};
+
+
 
 
 
@@ -1028,5 +1085,7 @@ module.exports={
     downloadFile,
     create_activities_admin,
     get_inicio_html,
-    logout
+    logout,
+    get_all_activities_send,
+    edit_activity_mark
 }

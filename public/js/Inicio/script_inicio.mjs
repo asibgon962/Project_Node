@@ -3,6 +3,7 @@ import { eventForCalendar } from "./EventsForBars/myCalendar.mjs";
 import { eventForUser } from "./EventsForBars/myUsers.mjs";
 import { eventForStats } from "./EventsForBars/myCharts.mjs";
 import { eventforTopBar } from "./EventsForBars/myTopBar.mjs";
+import { eventForAdmin } from "./EventsForBars/myAdmin.mjs";
 import {getCookie, get_all_photo,last_conexion,get_all_messages,upload_message,set_full_time_at_page,
   get_full_time_at_page,get_all_activities,upload_activity,get_all_activities_user,
   deleteActivityAndFile,downloadFile, upload_answer} from "./Fetchs/fetchs.mjs"
@@ -66,6 +67,7 @@ document.addEventListener("DOMContentLoaded", async function(){
       eventForCalendar(obj_actividades)
       eventForUser(objeto_foto)
       eventForStats(Chart,get_full_time_at_page)
+      eventForAdmin()
 
     }
 
@@ -139,7 +141,6 @@ document.addEventListener("DOMContentLoaded", async function(){
 
 
   try {
-    // Ejecutar los awaits secuenciales
     await last_conexion();
 
     objeto_foto = await get_all_photo();
@@ -151,6 +152,8 @@ document.addEventListener("DOMContentLoaded", async function(){
       }, 1000)
     })
     obj_actividades = await get_all_activities();
+    
+
     if (obj_actividades) console.log(obj_actividades);
 
     // Esperar 2 segundos antes de quitar el loader
