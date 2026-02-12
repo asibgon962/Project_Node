@@ -1066,6 +1066,34 @@ async function get_all_photo(req, res) {
   }
 }
 
+const changePassword = async (req, res) => {
+    try {
+        const { password, new_password, repit_password } = req.body;
+        const username = req.username; // Obtenido gracias al verificarToken
+
+        // 1. Validar que las nuevas contraseñas coincidan
+        if (new_password !== repit_password) {
+            return res.status(400).json({ message: "Las nuevas contraseñas no coinciden." });
+        }
+
+        // 2. Buscar al usuario en la BD (MongoDB)
+        const usuario = await Persona.findOne({ username: username });
+
+        // 3. Comprobar que la contraseña antigua es correcta
+        if (usuario.password !== password) {
+            return res.status(401).json({ message: "La contraseña actual es incorrecta." });
+        }
+
+        // 4. Guardar la nueva contraseña
+        usuario.password = new_password;
+        await usuario.save();
+
+        res.status(200).json({ message: "Contraseña actualizada correctamente ✅" });
+    } catch (error) {
+        res.status(500).json({ message: "Error en el servidor." });
+    }
+};
+
 module.exports={
     root,
     create,
@@ -1087,5 +1115,6 @@ module.exports={
     get_inicio_html,
     logout,
     get_all_activities_send,
-    edit_activity_mark
+    edit_activity_mark,
+    changePassword
 }

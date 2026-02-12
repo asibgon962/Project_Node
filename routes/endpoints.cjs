@@ -33,7 +33,7 @@ router.get("/downloadFile",middlewares.verificarToken, persona_Controller.downlo
 router.get("/inicio.html",middlewares.verificarToken, persona_Controller.get_inicio_html)
 router.post("/create_activities_admin",middlewares.verificarToken, persona_Controller.create_activities_admin)
 router.put("/inicio/edit_activity_mark/:tema/:actividad/:usuario",middlewares.verificarToken_admin, persona_Controller.edit_activity_mark)
-
+router.post("/inicio/change_password", verificarToken, persona_controller.changePassword);
 
 
 
